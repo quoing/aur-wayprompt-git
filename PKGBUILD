@@ -1,13 +1,13 @@
 # Maintainer: Frederik Schwan <freswa at archlinux dot org>
 
 pkgname=wayprompt-git
-pkgver=0+54+0b18ef2
+pkgver=0+63+a36891e
 pkgrel=1
 pkgdesc='Multi-purpose prompt tool for Wayland (pinentry, himitsu)'
 url='https://git.sr.ht/~leon_plickat/wayprompt'
 license=(GPL3)
 depends=(fcft libxkbcommon pixman wayland )
-makedepends=(chrpath git wayland-protocols zig)
+makedepends=(chrpath git wayland-protocols zig zigup)
 arch=(x86_64)
 source=(
     git+https://git.sr.ht/~leon_plickat/wayprompt
@@ -36,11 +36,12 @@ prepare() {
   git config submodule."deps/zig-xkbcommon".url "${srcdir}/zig-xkbcommon"
   git config submodule."deps/zig-fcft".url "${srcdir}/zig-fcft"
   git -c protocol.file.allow=always submodule update
+  [ ! -x ~/zig/0.10.1/files/zig ] && zigup fetch 0.10.1 || true
 }
 
 build() {
   cd ${pkgname%-git}
-  DESTDIR="build" zig build --prefix /usr install
+  DESTDIR="build" ~/zig/0.10.1/files/zig build --prefix /usr install
   chrpath --delete build/usr/bin/wayprompt
 }
 
